@@ -50,6 +50,7 @@ pub(self) mod mmap;
 pub(self) mod open;
 pub(self) mod pipe;
 pub(self) mod poll;
+pub(self) mod lseek;
 pub(self) mod read;
 pub(self) mod readlink;
 pub(self) mod recvfrom;
@@ -106,6 +107,7 @@ const SYS_STAT: usize = 4;
 const SYS_FSTAT: usize = 5;
 const SYS_LSTAT: usize = 6;
 const SYS_POLL: usize = 7;
+const SYS_LSEEK: usize = 8;
 const SYS_MMAP: usize = 9;
 const SYS_BRK: usize = 12;
 const SYS_RT_SIGACTION: usize = 13;
@@ -262,6 +264,7 @@ impl<'a> SyscallHandler<'a> {
                 self.sys_getdents64(Fd::new(a1 as i32), UserVAddr::new_nonnull(a2)?, a3)
             }
             SYS_POLL => self.sys_poll(UserVAddr::new_nonnull(a1)?, a2 as c_ulong, a3 as c_int),
+            SYS_LSEEK => self.sys_lseek(Fd::new(a1 as i32), a2 as c_off, a3 as c_int),
             SYS_SELECT => self.sys_select(
                 a1 as c_int,
                 UserVAddr::new(a2)?,
